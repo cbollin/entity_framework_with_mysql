@@ -50,6 +50,20 @@ namespace entity1
             }
         }
 
+        public static void ReadAll(YourContext db){
+            Console.WriteLine("Retrieving all users");
+
+            var allUsers = db.Users;
+
+            foreach (var user in allUsers)
+            {
+                Console.WriteLine("Name: " + user.name);
+                Console.WriteLine("Email: " + user.email);
+                Console.WriteLine("Password: " + user.password);
+                Console.WriteLine("Age: " + user.age);
+            }
+        }
+
         public static void Update(YourContext db)
         {
             Console.WriteLine("Enter the id of the user you wish to update: ");
@@ -57,23 +71,30 @@ namespace entity1
             int new_id = Int32.Parse(id);
             User RetrievedUser = db.Users.SingleOrDefault(user => user.id == new_id);
 
-            Console.WriteLine("Enter a new name: ");
-            string name = Console.ReadLine();
-            Console.WriteLine("Enter a new email: ");
-            string email = Console.ReadLine();
-            Console.WriteLine("Enter a new password: ");
-            string password = Console.ReadLine();
-            Console.WriteLine("Enter a new age: ");
-            string age = Console.ReadLine();
-            int new_age = Int32.Parse(age);
+            if(RetrievedUser != null)
+            {
+                Console.WriteLine("Enter a new name: ");
+                string name = Console.ReadLine();
+                Console.WriteLine("Enter a new email: ");
+                string email = Console.ReadLine();
+                Console.WriteLine("Enter a new password: ");
+                string password = Console.ReadLine();
+                Console.WriteLine("Enter a new age: ");
+                string age = Console.ReadLine();
+                int new_age = Int32.Parse(age);
 
-            RetrievedUser.name = name;
-            RetrievedUser.email = email;
-            RetrievedUser.password = password;
-            RetrievedUser.age = new_age;
+                RetrievedUser.name = name;
+                RetrievedUser.email = email;
+                RetrievedUser.password = password;
+                RetrievedUser.age = new_age;
 
-            db.SaveChanges();
-            Console.WriteLine(RetrievedUser.name + " has been updated!");
+                db.SaveChanges();
+                Console.WriteLine(RetrievedUser.name + " has been updated!");
+            }
+            else
+            {
+                Console.WriteLine("Sorry that user does not exist");
+            }
         }
 
         public static void Delete(YourContext db)
@@ -83,9 +104,23 @@ namespace entity1
             int new_id = Int32.Parse(id);
             User RetrievedUser = db.Users.SingleOrDefault(user => user.id == new_id);
 
-            db.Users.Remove(RetrievedUser);
-            db.SaveChanges();
-            Console.WriteLine("The user has been deleted!");
+            Console.WriteLine("Are you sure? " + RetrievedUser.name + 
+            " will be gone forever.. type Yes or No");
+
+            string answer = Console.ReadLine();
+            if(answer == "No"){
+                Console.WriteLine("OK");
+            }
+            else if(answer != "Yes" && answer != "No"){
+                Console.WriteLine("Invalid, try again");
+                Delete(db);
+            }
+            else if(answer == "Yes")
+            {
+                db.Users.Remove(RetrievedUser);
+                db.SaveChanges();
+                Console.WriteLine("The user has been deleted!");
+            }
         }
 
         public static void Main(string[] args)
@@ -95,7 +130,8 @@ namespace entity1
                 // Create(db);
                 // Read(db);
                 // Update(db);
-                // Delete(db);
+                Delete(db);
+                // ReadAll(db);
             }
         }
     }
