@@ -50,7 +50,8 @@ namespace entity1
             }
         }
 
-        public static void ReadAll(YourContext db){
+        public static void ReadAll(YourContext db)
+        {
             Console.WriteLine("Retrieving all users");
 
             var allUsers = db.Users;
@@ -70,7 +71,6 @@ namespace entity1
             string id = Console.ReadLine();
             int new_id = Int32.Parse(id);
             User RetrievedUser = db.Users.SingleOrDefault(user => user.id == new_id);
-
             if(RetrievedUser != null)
             {
                 Console.WriteLine("Enter a new name: ");
@@ -104,25 +104,33 @@ namespace entity1
             int new_id = Int32.Parse(id);
             User RetrievedUser = db.Users.SingleOrDefault(user => user.id == new_id);
 
-            Console.WriteLine("Are you sure? " + RetrievedUser.name + 
-            " will be gone forever.. type Yes or No");
-
-            string answer = Console.ReadLine();
-            if(answer == "No"){
-                Console.WriteLine("OK");
-            }
-            else if(answer != "Yes" && answer != "No"){
-                Console.WriteLine("Invalid, try again");
-                Delete(db);
-            }
-            else if(answer == "Yes")
+            if(RetrievedUser != null)
             {
-                db.Users.Remove(RetrievedUser);
-                db.SaveChanges();
-                Console.WriteLine("The user has been deleted!");
+                Console.WriteLine("Are you sure? " + RetrievedUser.name + 
+                " will be gone forever.. type Yes or No");
+
+                string answer = Console.ReadLine();
+                if(answer == "No")
+                {
+                    Console.WriteLine("OK");
+                }
+                else if(answer != "Yes" && answer != "No")
+                {
+                    Console.WriteLine("Invalid, try again");
+                    Delete(db);
+                }
+                else if(answer == "Yes")
+                {
+                    db.Users.Remove(RetrievedUser);
+                    db.SaveChanges();
+                    Console.WriteLine("The user has been deleted!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("The user does not exist");
             }
         }
-
         public static void Main(string[] args)
         {
             using(var db = new YourContext())
@@ -130,7 +138,7 @@ namespace entity1
                 // Create(db);
                 // Read(db);
                 // Update(db);
-                Delete(db);
+                // Delete(db);
                 // ReadAll(db);
             }
         }
